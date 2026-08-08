@@ -1,0 +1,8 @@
+# Text ngan CO DONG - kiem tra toan bo phan chuan hoa (moi dong = 1 file wav)
+Hôm nay là ngày 30/4/2025, lúc 14:30, nhóm chúng tôi hoàn thành 2 mô hình.
+Độ chính xác đạt 93,3%, xử lý được hơn 1.250.000 câu văn bản.
+UBND TP.HCM và các trường THPT đang ứng dụng CNTT vào giảng dạy.
+Các công nghệ AI, ML và GPU giúp huấn luyện nhanh gấp 3 lần.
+Quãng đường dài 5km, khối lượng 10kg, nhiệt độ 25°.
+Với phân số 3/4 và biểu thức 56 - x = 12, ta có x mũ 2 cộng 2 nhân x cộng 1.
+Giá chỉ 5$, vừa nhanh & tiện, tạo ra ~100 sản phẩm mỗi ngày.

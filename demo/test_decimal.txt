@@ -1,0 +1,6 @@
+# Test doc so thap phan (dau phay) - giong nu
+Tổng thời lượng khoảng 24,9 giờ.
+Câu ngắn nhất là 2,6 giây.
+Độ chính xác khoảng 93,3 phần trăm.
+Mô hình đạt tỷ lệ chỉ khoảng 0,03.
+Nhiệt độ tăng 1,5 độ mỗi năm.

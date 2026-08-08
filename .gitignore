@@ -1,0 +1,46 @@
+# ============================================================
+# GSU26AI03 — Vietnamese TTS. Chi day CODE + DOCS len GitHub.
+# KHONG day models/dataset/audio nang (GB) len GitHub.
+# ============================================================
+
+# --- Du lieu / mo hinh / audio nang (khong luu tren GitHub) ---
+models/
+dataset/
+f5_vi_model/
+vixtts_model/
+New/
+demo/*/
+
+# --- Cac dinh dang nhi phan nang ---
+*.pth
+*.wav
+*.zip
+*.conda
+*.ckpt
+*.bin
+*.safetensors
+cloudflared.exe
+
+# --- Python ---
+__pycache__/
+*.pyc
+*.pyo
+.ipynb_checkpoints/
+
+# --- Log / tam ---
+*.log
+events.out.tfevents.*
+
+# Giu lai: *.py, *.md, *.bat, docs/, demo/*.txt (cau demo)
+
+# Local/rac
+.claude/
+.gradio/
+/TIME
+
+# Tai lieu noi bo / bao cao / tham khao — KHONG cong khai
+docs/
+
+# Rac
+*.stackdump
+/train

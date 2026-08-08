@@ -1,0 +1,18 @@
+# lexicon_vi.txt
+# Tu doc BAT QUY TAC (ten rieng, tu muon, ky thuat). Chi can liet ke nhung tu
+# ma quy tac G2P doc sai. Tu thuan Viet de quy tac tu xu ly - KHONG can them.
+# Dinh dang:  tu<TAB>phoneme1 phoneme2 ...  (phoneme cach nhau bang khoang trang)
+#
+# Day la file MAU - nhom bo sung dan khi gap tu doc sai trong qua trinh kiem tra.
+wifi	oai phai
+web	oép
+app	áp
+email	i meo
+online	on lai
+laptop	láp tóp
+file	phai
+internet	in to nét
+google	gu gồ
+microsoft	mai cờ rô sốp
+covid	cô vít
+ai	ây ai

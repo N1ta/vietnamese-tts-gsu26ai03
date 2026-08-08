@@ -1,0 +1,13 @@
+# Moi dong la 1 cau demo. Dong bat dau bang # se bi bo qua.
+# 5 cau sap xep DE -> KHO, moi cau khoe them mot tinh nang chuan hoa.
+# Sua/them/bot cau tu do o day, KHONG can dong vao code.
+# Cau 1 (de): cau noi thuong, khong co gi dac biet.
+xin chào, đây là hệ thống tổng hợp giọng nói tiếng Việt do nhóm chúng tôi xây dựng.
+# Cau 2: so + ngay thang + phan tram.
+hôm nay là ngày 30/4/2025, nhiệt độ ngoài trời khoảng 32 độ, độ ẩm 75%.
+# Cau 3: viet tat + don vi do luong.
+UBND TP.HCM cho biết tuyến đường dài 15km, xe chạy với vận tốc 40 km/h trong 2 tiếng.
+# Cau 4: acronym doc chu cai + so thap phan.
+công nghệ AI và ML giúp mô hình đạt độ chính xác lên tới 93,5%.
+# Cau 5 (kho nhat): cong thuc toan + phan so.
+tìm x thuộc tập {23, 24, 25, 26} biết 56 - x chia hết cho 8, và phân số 3/4 lớn hơn 1/2.
