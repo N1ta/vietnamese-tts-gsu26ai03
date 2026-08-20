@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>VietVoice — Tổng hợp giọng nói tiếng Việt</title>
+<script src="https://unpkg.com/wavesurfer.js@7/dist/wavesurfer.min.js"></script>
+<style>
+  :root{
+    --bg:#f6f7fb; --card:#ffffff; --ink:#1e293b; --muted:#64748b;
+    --line:#e2e8f0; --brand:#4f46e5; --brand2:#6366f1; --field:#f8fafc; --wave:#cbd5e1;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --bg:#0f172a; --card:#1e293b; --ink:#e2e8f0; --muted:#94a3b8;
+           --line:#334155; --field:#0f172a; --wave:#475569; }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+       background:var(--bg);color:var(--ink);
+       display:flex;align-items:center;justify-content:center;min-height:100vh;padding:24px}
+  .wrap{width:100%;max-width:740px}
+  header{text-align:center;margin-bottom:20px}
+  header h1{margin:0;font-size:2rem;font-weight:800;letter-spacing:-.02em;
+            background:linear-gradient(90deg,var(--brand),var(--brand2));
+            -webkit-background-clip:text;background-clip:text;color:transparent}
+  header p{margin:6px 0 0;color:var(--muted);font-size:.95rem}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:18px;
+        padding:22px;box-shadow:0 8px 30px rgba(2,6,23,.06)}
+  .guide{background:var(--field);border:1px solid var(--line);border-radius:12px;
+         padding:11px 14px;font-size:.86rem;color:var(--muted);margin-bottom:16px;line-height:1.55}
+  .guide b{color:var(--ink)}
+  .guide .step{display:inline-block;width:18px;height:18px;line-height:18px;text-align:center;
+       border-radius:50%;background:var(--brand);color:#fff;font-size:.72rem;font-weight:700;margin-right:4px}
+  label{display:block;font-size:.85rem;font-weight:600;color:var(--muted);margin:0 0 6px}
+  .samples{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .samples button{padding:7px 12px;border-radius:999px;border:1px solid var(--line);
+       background:var(--field);color:var(--ink);font-size:.82rem;font-weight:600;cursor:pointer;
+       font-family:inherit;transition:.15s}
+  .samples button:hover{border-color:var(--brand);color:var(--brand);background:rgba(79,70,229,.08)}
+  textarea{width:100%;min-height:120px;resize:vertical;padding:13px 14px;border-radius:12px;
+           border:1px solid var(--line);background:var(--field);color:var(--ink);
+           font-family:inherit;font-size:1rem;line-height:1.5}
+  textarea:focus{outline:none;border-color:var(--brand)}
+  .row{display:flex;gap:16px;flex-wrap:wrap;margin-top:16px}
+  .col{flex:1;min-width:200px}
+  .voices{display:flex;gap:10px}
+  .voices button{flex:1;padding:10px;border-radius:10px;border:1.5px solid var(--line);
+                 background:var(--field);color:var(--ink);font-weight:600;cursor:pointer;
+                 font-size:.95rem;transition:.15s}
+  .voices button.active{border-color:var(--brand);background:rgba(79,70,229,.10);color:var(--brand)}
+  .models{display:flex;gap:8px;flex-wrap:wrap}
+  .models button{flex:1 1 auto;min-width:118px;padding:10px 8px;border-radius:10px;border:1.5px solid var(--line);
+                 background:var(--field);color:var(--ink);font-weight:600;cursor:pointer;font-size:.9rem;
+                 font-family:inherit;transition:.15s;text-align:center}
+  .models button:hover{border-color:var(--brand)}
+  .models button.active{border-color:var(--brand);background:rgba(79,70,229,.10);color:var(--brand)}
+  .models .best{display:block;font-size:.64rem;font-weight:700;color:#16a34a;margin-top:2px}
+  #qualwrap.disabled{opacity:.4;pointer-events:none}
+  input[type=range]{width:100%;accent-color:var(--brand)}
+  .of{font-weight:400;color:var(--muted)}
+  .slabels{display:flex;justify-content:space-between;font-size:.72rem;color:var(--muted);margin-top:3px}
+  .hint{font-size:.78rem;color:var(--muted);margin-top:4px}
+  .go{width:100%;margin-top:20px;padding:14px;border:none;border-radius:12px;cursor:pointer;
+      background:linear-gradient(90deg,var(--brand),var(--brand2));color:#fff;
+      font-size:1.05rem;font-weight:700;letter-spacing:.01em}
+  .go:disabled{opacity:.6;cursor:not-allowed}
+  #status{margin-top:14px;font-size:.9rem;color:var(--muted);text-align:center;min-height:20px}
+  .err{color:#dc2626 !important}
+  /* --- Player dang song --- */
+  #out{margin-top:20px;display:none;background:var(--field);border:1px solid var(--line);
+       border-radius:14px;padding:14px 16px}
+  .p-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+  .p-head span{font-size:.85rem;font-weight:600;color:var(--muted)}
+  #dl{color:var(--muted);text-decoration:none;font-size:.82rem;border:1px solid var(--line);
+      padding:4px 10px;border-radius:8px}
+  #dl:hover{color:var(--brand);border-color:var(--brand)}
+  #waveform{cursor:pointer}
+  .p-ctrl{display:flex;align-items:center;gap:14px;margin-top:10px}
+  #playbtn{width:44px;height:44px;flex:none;border:none;border-radius:50%;cursor:pointer;
+    background:linear-gradient(90deg,var(--brand),var(--brand2));color:#fff;font-size:1.05rem;
+    display:flex;align-items:center;justify-content:center}
+  #time{font-variant-numeric:tabular-nums;font-size:.85rem;color:var(--muted)}
+  .vol{display:flex;align-items:center;gap:8px;margin-left:auto;color:var(--muted)}
+  .vol input[type=range]{width:84px}
+  footer{text-align:center;color:var(--muted);font-size:.8rem;margin-top:18px}
+  .spin{display:inline-block;width:14px;height:14px;border:2px solid var(--muted);
+        border-top-color:transparent;border-radius:50%;animation:s .7s linear infinite;
+        vertical-align:middle;margin-right:6px}
+  @keyframes s{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>VietVoice</h1>
+      <p>Chuyển văn bản tiếng Việt thành giọng nói tự nhiên</p>
+    </header>
+
+    <div class="card">
+      <div class="guide">
+        <b>Cách dùng:</b>
+        <span class="step">1</span> Bấm một <b>câu mẫu</b> bên dưới (hoặc tự nhập văn bản) &nbsp;
+        <span class="step">2</span> Chọn <b>mô hình</b> &nbsp;
+        <span class="step">3</span> Bấm <b>Tạo giọng nói</b> để nghe.
+      </div>
+
+      <label>Câu mẫu (bấm để điền — từ dễ đến khó)</label>
+      <div class="samples" id="samples"></div>
+
+      <label for="text">Văn bản</label>
+      <textarea id="text" placeholder="Nhập văn bản tiếng Việt, hoặc bấm một câu mẫu ở trên..."></textarea>
+
+      <label>Mô hình (bấm để chọn — so sánh 5 mô hình)</label>
+      <div class="models" id="models">
+        <button type="button" data-m="f5_nu" class="active">F5-TTS · Nữ</button>
+        <button type="button" data-m="f5_nam">F5-TTS · Nam</button>
+        <button type="button" data-m="vits">VITS</button>
+        <button type="button" data-m="fs2">FastSpeech2</button>
+        <button type="button" data-m="taco">Tacotron2</button>
+      </div>
+
+      <div class="col" id="qualwrap" style="margin-top:16px">
+        <label>Chất lượng giọng: <span id="nfeval">32</span><span class="of"> / 48</span><span class="of" id="qf5note"> · chỉ áp dụng cho F5</span></label>
+        <input type="range" id="nfe" min="16" max="48" step="8" value="32" />
+        <div class="slabels"><span>← Nhanh</span><span>Mượt →</span></div>
+        <div class="hint">Số bước sinh: cao hơn thì giọng rõ &amp; mượt hơn nhưng lâu hơn. Nên để 32.</div>
+      </div>
+
+      <button class="go" id="go">Tạo giọng nói</button>
+      <div id="status"></div>
+
+      <div id="out">
+        <div class="p-head">
+          <span>Kết quả</span>
+          <a id="dl" download="vietvoice.wav">⤓ Tải xuống</a>
+        </div>
+        <div id="waveform"></div>
+        <div class="p-ctrl">
+          <button id="playbtn">▶</button>
+          <span id="time">0:00 / 0:00</span>
+          <div class="vol" title="Âm lượng">
+            <svg id="volicon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 8.05v7.9A4.5 4.5 0 0 0 16.5 12zM14 3.23v2.06a7 7 0 0 1 0 13.42v2.06A9 9 0 0 0 14 3.23z"/></svg>
+            <input type="range" id="volume" min="0" max="1" step="0.05" value="1" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer>Hỗ trợ số, ngày tháng, viết tắt, văn bản dài · So sánh 5 mô hình: F5-TTS, VITS, FastSpeech2, Tacotron2</footer>
+  </div>
+
+<script>
+  const API = "https://strangely-satirical-onstage.ngrok-free.dev";
+
+  const SAMPLES = [
+    ["1 · Câu thường",        "Xin chào, đây là hệ thống tổng hợp giọng nói tiếng Việt do nhóm chúng tôi xây dựng."],
+    ["2 · Số & ngày tháng",   "Hôm nay là ngày 30/4/2025, nhiệt độ ngoài trời khoảng 32 độ, độ ẩm 75%."],
+    ["3 · Viết tắt & đơn vị", "UBND TP.HCM cho biết tuyến đường dài 15km, xe chạy với vận tốc 40 km/h trong 2 tiếng."],
+    ["4 · Acronym & thập phân","Công nghệ AI và ML giúp mô hình đạt độ chính xác lên tới 93,5%."],
+    ["5 · Công thức toán",    "Tìm x thuộc tập {23, 24, 25, 26} biết 56 - x chia hết cho 8, và phân số 3/4 lớn hơn 1/2."],
+  ];
+  const textEl=document.getElementById("text"), samplesEl=document.getElementById("samples");
+  SAMPLES.forEach(([label, sentence])=>{
+    const b=document.createElement("button");
+    b.type="button"; b.textContent=label; b.title=sentence;
+    b.onclick=()=>{ textEl.value=sentence; textEl.focus(); };
+    samplesEl.appendChild(b);
+  });
+  textEl.value = SAMPLES[0][1];
+
+  let model="f5_nu";
+  const qualwrap=document.getElementById("qualwrap");
+  document.querySelectorAll("#models button").forEach(b=>{
+    b.onclick=()=>{document.querySelectorAll("#models button").forEach(x=>x.classList.remove("active"));
+      b.classList.add("active"); model=b.dataset.m;
+      qualwrap.classList.toggle("disabled", !model.startsWith("f5"));};
+  });
+  const nfe=document.getElementById("nfe"), nfeval=document.getElementById("nfeval");
+  nfe.oninput=()=>nfeval.textContent=nfe.value;
+
+  // --- wavesurfer player ---
+  const css=getComputedStyle(document.documentElement);
+  const ws=WaveSurfer.create({
+    container:"#waveform", height:64, barWidth:2, barGap:1, barRadius:2, cursorWidth:0,
+    waveColor:css.getPropertyValue("--wave").trim(), progressColor:css.getPropertyValue("--brand").trim(),
+  });
+  const playbtn=document.getElementById("playbtn"), timeEl=document.getElementById("time");
+  const fmt=t=>{t=Math.floor(t||0);return Math.floor(t/60)+":"+String(t%60).padStart(2,"0");};
+  const refresh=()=>{timeEl.textContent=fmt(ws.getCurrentTime())+" / "+fmt(ws.getDuration());};
+  ws.on("play",()=>playbtn.textContent="⏸"); ws.on("pause",()=>playbtn.textContent="▶");
+  ws.on("finish",()=>playbtn.textContent="▶"); ws.on("ready",refresh); ws.on("timeupdate",refresh);
+  playbtn.onclick=()=>ws.playPause();
+
+  // --- am luong ---
+  const volume=document.getElementById("volume"), volpath=document.querySelector("#volicon path");
+  const D_LOUD="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 8.05v7.9A4.5 4.5 0 0 0 16.5 12zM14 3.23v2.06a7 7 0 0 1 0 13.42v2.06A9 9 0 0 0 14 3.23z";
+  const D_MUTE="M3 9v6h4l5 5V4L7 9H3zm18.59 3l2.12-2.12-1.41-1.41L20.17 10.6l-2.13-2.13-1.41 1.41L18.76 12l-2.13 2.12 1.41 1.41 2.13-2.12 2.12 2.12 1.41-1.41z";
+  volume.oninput=()=>{const v=parseFloat(volume.value); ws.setVolume(v); volpath.setAttribute("d", v===0?D_MUTE:D_LOUD);};
+
+  const go=document.getElementById("go"), status=document.getElementById("status"),
+        out=document.getElementById("out"), dl=document.getElementById("dl");
+
+  go.onclick=async()=>{
+    const text=textEl.value.trim();
+    if(!text){status.textContent="Vui lòng nhập văn bản hoặc chọn câu mẫu."; status.className="err"; return;}
+    go.disabled=true; out.style.display="none";
+    status.className=""; status.innerHTML='<span class="spin"></span>Đang tạo giọng nói... (mô hình khác F5 hoặc đoạn dài có thể lâu hơn)';
+    try{
+      const res=await fetch(API+"/synthesize",{
+        method:"POST",
+        headers:{"Content-Type":"application/json","ngrok-skip-browser-warning":"true"},
+        body:JSON.stringify({text, model, nfe:parseInt(nfe.value)})
+      });
+      if(!res.ok) throw new Error("Máy chủ trả về lỗi "+res.status);
+      const blob=await res.blob(), url=URL.createObjectURL(blob);
+      ws.load(url); dl.href=url;
+      out.style.display="block"; status.textContent="Đã sinh xong — bấm ▶ để nghe.";
+    }catch(e){
+      status.className="err";
+      status.textContent="Không kết nối được máy chủ. Kiểm tra laptop đã chạy backend chưa. ("+e.message+")";
+    }finally{ go.disabled=false; }
+  };
+</script>
+</body>
+</html>

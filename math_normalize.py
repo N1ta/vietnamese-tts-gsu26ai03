@@ -62,11 +62,36 @@ _MATH_CONTEXT = re.compile(
     r"|[A-Za-z)]\s*-\s*\d"         # bien trừ so
 )
 
+# Ngu canh toan bang TU (cong thuc/de bai viet bang CHU, khong co ky hieu).
+# Chi kich hoat khi cau CO chu cai don le -> tranh dong cham van xuoi thuong.
+#   "tìm x", "gọi y", "điểm A", "a, b, c", "x thuộc/chia hết/lớn hơn", "hàm số"...
+_MATH_WORDS = re.compile(
+    r"\b(phương trình|bất phương trình|đa thức|hàm số|tập hợp|chia hết|"
+    r"số nguyên|số tự nhiên|ước số|bội số|ước chung|bội chung|căn bậc|nghiệm)\b"
+)
+_VAR_CUE = re.compile(                      # tu dan dat + 1 chu cai don: "tìm x","điểm A"
+    r"\b(tìm|gọi|đặt|cho|điểm|góc|cạnh|đỉnh|tam giác|đường thẳng|đoạn thẳng)\s+"
+    r"([A-Za-z])(?![A-Za-zÀ-ỹ])"
+)
+_VAR_REL = re.compile(                       # 1 chu cai + quan he toan: "x thuộc","y chia hết"
+    r"(?<![A-Za-zÀ-ỹ])[A-Za-z]\s+(thuộc|chia hết|lớn hơn|nhỏ hơn|bằng)\b"
+)
+_LETTER_LIST = re.compile(                   # danh sach bien: "a, b, c"
+    r"(?<![A-Za-zÀ-ỹ])[A-Za-z]\s*,\s*[A-Za-z](?![A-Za-zÀ-ỹ])"
+)
+_ISOLATED_LETTER = re.compile(r"(?<![A-Za-zÀ-ỹ])[A-Za-z](?![A-Za-zÀ-ỹ])")
+
 
 def _normalize_clause(t: str) -> str:
     """Chuan hoa toan cho 1 CAU. has_math xet RIENG tung cau -> "Bộ Y tế" o cau
     khong-toan khong bi doi Y, du cau khac trong van ban co cong thuc."""
-    has_math = bool(_MATH_CONTEXT.search(t))  # xet tren cau GOC (operator con la ky hieu)
+    has_math = bool(_MATH_CONTEXT.search(t))  # (1) ky hieu toan: =, +, /, ^, so-tru...
+    if not has_math and _ISOLATED_LETTER.search(t):
+        # (2) khong co ky hieu nhung co chu cai don le + dau hieu toan bang TU
+        #     -> vd "Cho a, b, c", "Tìm x", "y chia hết cho 3", "hàm số y".
+        if (_VAR_CUE.search(t) or _VAR_REL.search(t)
+                or _LETTER_LIST.search(t) or _MATH_WORDS.search(t)):
+            has_math = True
 
     # 1) Phan so: so / so  -> "so phần so"
     t = re.sub(r"(\d)\s*/\s*(\d)", r"\1 phần \2", t)
