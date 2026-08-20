@@ -27,7 +27,7 @@ Tất cả dùng chung một **front-end** (chuẩn hóa văn bản + cắt đo�
 | FastSpeech2 + HiFi-GAN | from-scratch | 16 kHz | 3.13 ± 1.04 |
 | Tacotron2 + HiFi-GAN | from-scratch | 16 kHz | 2.72 ± 1.13 |
 
-Độ tin cậy Cronbach's α = 0.96; ANOVA F(4,100) = 34.52, p < .001.
+Độ tin cậy nội tại (Cronbach's α) = 0.96.
 
 ## Cấu trúc mã nguồn
 
@@ -38,7 +38,8 @@ Tất cả dùng chung một **front-end** (chuẩn hóa văn bản + cắt đo�
 | `data_audit.py`, `test_normalize.py` | Kiểm tra dữ liệu / độ chính xác chuẩn hóa |
 | `demo_vits.py`, `demo_tacotron.py` | Sinh demo nhánh A (VITS / Tacotron2 / FastSpeech2 + HiFi-GAN) |
 | `demo_f5.py`, `gen_baidai_robust.py` | Sinh giọng F5 (câu ngắn / văn bản dài, best-of-N) |
-| `web_f5.py` | Ứng dụng web (Gradio) — nhập text → sinh audio |
+| `api_f5.py`, `api_coqui.py` | Backend web (FastAPI) — phục vụ cả 5 mô hình (F5 trên GPU, Coqui trên CPU) |
+| `vietvoice-web/index.html` | Giao diện web (deploy trên Vercel) — chọn mô hình, nhập text → nghe |
 
 > **Lưu ý:** các checkpoint mô hình, dữ liệu audio và file .wav **không** được lưu trên GitHub (dung lượng lớn). Dataset InFoRe công khai tại HuggingFace `ntt123/infore`; mô hình F5-TTS Vietnamese: `hynt/F5-TTS-Vietnamese-ViVoice`.
 
@@ -46,17 +47,20 @@ Tất cả dùng chung một **front-end** (chuẩn hóa văn bản + cắt đo�
 
 Hai môi trường conda tách biệt (do xung đột thư viện `transformers`):
 
-- **`coqui`** (nhánh A — Coqui-TTS 0.27.5): chạy `demo_vits.py`, `demo_tacotron.py`.
-- **`f5_env`** (nhánh B — F5-TTS): chạy `web_f5.py` (web demo), `demo_f5.py`.
+- **`coqui`** (nhánh A — Coqui-TTS 0.27.5): chạy `demo_vits.py`, `demo_tacotron.py`; backend `api_coqui.py`.
+- **`f5_env`** (nhánh B — F5-TTS): chạy `demo_f5.py`; backend `api_f5.py`.
+
+**Web demo (VietVoice):** giao diện tĩnh deploy trên Vercel gọi backend FastAPI — cả 5 mô hình đều chọn và sinh được (F5 trên GPU, 3 mô hình Coqui trên CPU).
 
 ```bash
-# Web demo (trong f5_env):
-python web_f5.py
+# Bật backend (F5 + Coqui) + tunnel cố định:
+start_backend_fixed.bat
+# rồi mở giao diện web đã deploy trên Vercel
 ```
 
 ## Công nghệ
 
-Python 3.10 · PyTorch (CUDA 12.1) · Coqui-TTS 0.27.5 · F5-TTS · HiFi-GAN · Gradio · wav2vec2 (forced alignment) · Demucs.
+Python 3.10 · PyTorch (CUDA 12.1) · Coqui-TTS 0.27.5 · F5-TTS · HiFi-GAN · FastAPI · Vercel · wav2vec2 (forced alignment) · Demucs.
 
 ---
 
