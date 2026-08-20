@@ -3,7 +3,7 @@
 **Capstone Project — GSU26AI03 · FPT University**
 Tổng hợp giọng nói tiếng Việt bằng các mô hình học sâu.
 
-> **Supervisor:** MSc. Đỗ Đức Hào
+> **Supervisor:** Do Duc Hao, PhD.
 > **Team:** Nguyễn Đức Hiển (SE173053) · Lưu Đức Anh (SE183141) · Nguyễn Trần Trung Tín (SE183050)
 
 ---
